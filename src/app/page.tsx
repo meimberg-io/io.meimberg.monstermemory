@@ -165,6 +165,24 @@ export default function Home() {
           />
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 border-t border-gray-700 py-3">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <span className="text-gray-400 text-sm">
+              Created by: <a 
+                href="https://meimberg.io" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                meimberg.io
+              </a>
+            </span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
