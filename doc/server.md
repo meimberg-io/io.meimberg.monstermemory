@@ -31,13 +31,16 @@ vim ~/.profile
 
 **Folgendes rein**
 ```sh
-if [ -f ~/.bashrc ]; then . ~/.bashrc fi
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
 ```
 
 **Und speichern. Und dann...**
 ```sh
 source ~/.bashrc
 nvm install 20
+nvm use 20
 npm install pm2 -g
 ```
 
