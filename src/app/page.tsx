@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GameBoard from '@/components/GameBoard';
 import GameStats from '@/components/GameStats';
 import GameControls from '@/components/GameControls';
+import GameCelebration from '@/components/GameCelebration';
 import { useMemoryGame } from '@/hooks/useMemoryGame';
 
 // Monster images from the pics directory
@@ -54,6 +55,7 @@ const MONSTER_IMAGES = [
 
 export default function Home() {
   const [gridSize, setGridSize] = useState(4);
+  const [showCelebration, setShowCelebration] = useState(false);
   const { gameState, stats, startNewGame, handleCardClick } = useMemoryGame({
     gridSize,
     imageUrls: MONSTER_IMAGES,
@@ -69,6 +71,21 @@ export default function Home() {
 
   const handleGridSizeChange = (newSize: number) => {
     setGridSize(newSize);
+  };
+
+  // Show celebration when game is completed
+  useEffect(() => {
+    if (gameState.isGameComplete && !showCelebration) {
+      // Small delay to ensure all animations are complete
+      setTimeout(() => {
+        setShowCelebration(true);
+      }, 500);
+    }
+  }, [gameState.isGameComplete, showCelebration]);
+
+  const handleCloseCelebration = () => {
+    setShowCelebration(false);
+    startNewGame();
   };
 
   return (
@@ -117,9 +134,10 @@ export default function Home() {
                   onChange={(e) => handleGridSizeChange(Number(e.target.value))}
                   className="px-2 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value={4}>4x4</option>
-                  <option value={6}>6x6</option>
-                  <option value={8}>8x8</option>
+                  <option value={2}>2x2 (4 cards)</option>
+                  <option value={4}>4x4 (16 cards)</option>
+                  <option value={6}>6x6 (36 cards)</option>
+                  <option value={8}>8x8 (64 cards)</option>
                 </select>
               </div>
             </div>
@@ -183,6 +201,17 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Game Celebration Modal */}
+      <GameCelebration
+        isVisible={showCelebration}
+        onClose={handleCloseCelebration}
+        gameStats={{
+          moves: stats.totalMoves,
+          time: stats.totalTime,
+          gridSize: gridSize
+        }}
+      />
     </div>
   );
 }

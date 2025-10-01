@@ -41,3 +41,4 @@ for (let i = 1; i <= 32; i++) {
 
 console.log('Generated 32 placeholder images!');
 
+

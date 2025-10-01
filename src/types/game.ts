@@ -13,6 +13,7 @@ export interface GameState {
   isGameComplete: boolean;
   gameStartTime: number | null;
   gameEndTime: number | null;
+  wrongPairCards: string[];
 }
 
 export interface GameStats {

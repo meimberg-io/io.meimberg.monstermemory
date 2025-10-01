@@ -17,6 +17,7 @@ export function useMemoryGame({ gridSize, imageUrls }: UseMemoryGameProps) {
     isGameComplete: false,
     gameStartTime: null,
     gameEndTime: null,
+    wrongPairCards: [],
   });
 
   const [stats, setStats] = useState<GameStats>({
@@ -29,7 +30,7 @@ export function useMemoryGame({ gridSize, imageUrls }: UseMemoryGameProps) {
   // Create cards from image URLs
   const createCards = useCallback((urls: string[]): Card[] => {
     const totalCards = gridSize * gridSize;
-    const pairsNeeded = totalCards / 2;
+    const pairsNeeded = Math.floor(totalCards / 2);
     
     // Shuffle the available images and take only the number we need for pairs
     const shuffledUrls = [...urls].sort(() => Math.random() - 0.5);
@@ -60,6 +61,7 @@ export function useMemoryGame({ gridSize, imageUrls }: UseMemoryGameProps) {
       isGameComplete: false,
       gameStartTime: Date.now(),
       gameEndTime: null,
+      wrongPairCards: [],
     });
     setStats({
       totalMoves: 0,
@@ -114,7 +116,12 @@ export function useMemoryGame({ gridSize, imageUrls }: UseMemoryGameProps) {
             gameEndTime: isGameComplete ? Date.now() : null,
           };
         } else {
-          // No match, flip cards back after a delay
+          // No match, show red border then flip cards back after a delay
+          setGameState(prevState => ({
+            ...prevState,
+            wrongPairCards: [firstCardId, secondCardId],
+          }));
+          
           setTimeout(() => {
             setGameState(prevState => ({
               ...prevState,
@@ -125,6 +132,7 @@ export function useMemoryGame({ gridSize, imageUrls }: UseMemoryGameProps) {
               ),
               flippedCards: [],
               moves: prevState.moves + 1,
+              wrongPairCards: [],
             }));
           }, 1000);
         }
@@ -141,17 +149,23 @@ export function useMemoryGame({ gridSize, imageUrls }: UseMemoryGameProps) {
   // Update stats when game completes
   useEffect(() => {
     if (gameState.isGameComplete && gameState.gameStartTime && gameState.gameEndTime) {
-      const totalTime = gameState.gameEndTime - gameState.gameStartTime;
+      const totalTimeMs = gameState.gameEndTime - gameState.gameStartTime;
+      const totalTimeSeconds = Math.floor(totalTimeMs / 1000);
       const accuracy = gameState.moves > 0 ? (gameState.matchedPairs * 2 / gameState.moves) * 100 : 0;
       
       setStats({
         totalMoves: gameState.moves,
-        totalTime,
+        totalTime: totalTimeSeconds,
         matchedPairs: gameState.matchedPairs,
         accuracy,
       });
     }
   }, [gameState.isGameComplete, gameState.gameStartTime, gameState.gameEndTime, gameState.moves, gameState.matchedPairs]);
+
+  // Restart game when grid size changes
+  useEffect(() => {
+    startNewGame();
+  }, [gridSize, startNewGame]);
 
   return {
     gameState,

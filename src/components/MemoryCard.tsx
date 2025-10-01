@@ -7,9 +7,10 @@ interface MemoryCardProps {
   card: Card;
   onClick: (cardId: string) => void;
   isDisabled: boolean;
+  isWrongPair: boolean;
 }
 
-export default function MemoryCard({ card, onClick, isDisabled }: MemoryCardProps) {
+export default function MemoryCard({ card, onClick, isDisabled, isWrongPair }: MemoryCardProps) {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleClick = () => {
@@ -24,30 +25,32 @@ export default function MemoryCard({ card, onClick, isDisabled }: MemoryCardProp
 
   return (
     <div
-      className={`
-        relative w-full h-full cursor-pointer transform transition-all duration-300 ease-in-out
-        ${isAnimating ? 'scale-95' : 'hover:scale-105'}
-        ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}
-      `}
+        className={`
+          relative w-full h-full cursor-pointer transform transition-all duration-300 ease-in-out
+          ${isAnimating ? 'scale-95' : !card.isFlipped && !card.isMatched ? 'hover:brightness-125' : ''}
+          ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}
+        `}
       onClick={handleClick}
     >
       <div
         className={`
-          w-full h-full rounded-lg border-2 border-gray-600
+          w-full h-full rounded-lg border-4 border-gray-600
           transition-transform duration-300 ease-in-out
           ${card.isFlipped || card.isMatched ? 'rotate-y-180' : ''}
           ${card.isMatched ? 'border-green-500' : ''}
+          ${isWrongPair ? 'border-red-500' : ''}
         `}
         style={{ transformStyle: 'preserve-3d' }}
       >
         {/* Card Back */}
         <div
           className={`
-            absolute inset-0 w-full h-full rounded-lg bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800
+            absolute inset-0 w-full h-full bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800
             flex items-center justify-center text-white
             ${card.isFlipped || card.isMatched ? 'opacity-0' : 'opacity-100'}
             transition-opacity duration-300
           `}
+          style={{ borderRadius: '4px' }}
         >
           <img 
             src="/monstershape2_white.png" 
@@ -59,11 +62,12 @@ export default function MemoryCard({ card, onClick, isDisabled }: MemoryCardProp
         {/* Card Front */}
         <div
           className={`
-            absolute inset-0 w-full h-full rounded-lg bg-gray-100
+            absolute inset-0 w-full h-full bg-gray-100
             flex items-center justify-center overflow-hidden
             ${card.isFlipped || card.isMatched ? 'opacity-100' : 'opacity-0'}
             transition-opacity duration-300
           `}
+          style={{ borderRadius: '4px' }}
         >
           {card.imageUrl ? (
             <img

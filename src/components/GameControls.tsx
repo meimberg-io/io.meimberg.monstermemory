@@ -15,6 +15,7 @@ export default function GameControls({
   gridSize, 
   onGridSizeChange 
 }: GameControlsProps) {
+  // Updated with new grid size options
   return (
     <div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-6 border border-gray-700">
       <h2 className="text-2xl font-bold text-white mb-4">Game Controls</h2>
@@ -49,6 +50,7 @@ export default function GameControls({
             className="px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isGameActive}
           >
+            <option value={2}>2x2 (4 cards)</option>
             <option value={4}>4x4 (16 cards)</option>
             <option value={6}>6x6 (36 cards)</option>
             <option value={8}>8x8 (64 cards)</option>
