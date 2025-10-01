@@ -6,6 +6,7 @@ import GameStats from '@/components/GameStats';
 import GameControls from '@/components/GameControls';
 import GameCelebration from '@/components/GameCelebration';
 import { useMemoryGame } from '@/hooks/useMemoryGame';
+import { trackGameStart, trackGameComplete, trackGridSizeChange, trackPageView } from '@/utils/matomo';
 
 // Monster images from the pics directory
 const MONSTER_IMAGES = [
@@ -61,7 +62,13 @@ export default function Home() {
     imageUrls: MONSTER_IMAGES,
   });
 
+  // Track page view on component mount
+  useEffect(() => {
+    trackPageView('Monster Memory Game');
+  }, []);
+
   const handleNewGame = () => {
+    trackGameStart(gridSize);
     startNewGame();
   };
 
@@ -70,18 +77,22 @@ export default function Home() {
   };
 
   const handleGridSizeChange = (newSize: number) => {
+    trackGridSizeChange(gridSize, newSize);
     setGridSize(newSize);
   };
 
   // Show celebration when game is completed
   useEffect(() => {
     if (gameState.isGameComplete && !showCelebration) {
+      // Track game completion
+      trackGameComplete(gridSize, stats.totalMoves, stats.totalTime);
+      
       // Small delay to ensure all animations are complete
       setTimeout(() => {
         setShowCelebration(true);
       }, 500);
     }
-  }, [gameState.isGameComplete, showCelebration]);
+  }, [gameState.isGameComplete, showCelebration, gridSize, stats.totalMoves, stats.totalTime]);
 
   const handleCloseCelebration = () => {
     setShowCelebration(false);
