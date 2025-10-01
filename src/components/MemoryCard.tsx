@@ -50,7 +50,7 @@ export default function MemoryCard({ card, onClick, isDisabled }: MemoryCardProp
           `}
         >
           <img 
-            src="/monstershape_white.png" 
+            src="/monstershape2_white.png" 
             alt="Monster" 
             className="w-10 h-10 opacity-60 filter brightness-0 invert"
           />

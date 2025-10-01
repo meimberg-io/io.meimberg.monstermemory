@@ -80,7 +80,7 @@ export default function Home() {
             {/* Title */}
             <div className="flex items-center gap-3">
               <img 
-                src="/monstershape_white.png" 
+                src="/monstershape2_white.png" 
                 alt="Monster" 
                 className="w-8 h-8 filter brightness-0 invert"
               />
