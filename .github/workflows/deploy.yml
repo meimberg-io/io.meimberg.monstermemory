@@ -57,11 +57,15 @@ jobs:
           cd $APP_DIR
           
           # Create production environment file
-          cat > .env << 'EOF'
+          echo "Creating .env with APP_PORT=$APP_PORT"
+          cat > .env << EOF
           NODE_ENV=production
           APP_PORT=$APP_PORT
           PORT=5679    
           EOF
+          
+          echo "Created .env file:"
+          cat .env
           
           # Clone the repository on the server
           rm -rf temp-deploy
