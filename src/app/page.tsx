@@ -72,10 +72,6 @@ export default function Home() {
     startNewGame();
   };
 
-  const handleResetGame = () => {
-    startNewGame();
-  };
-
   const handleGridSizeChange = (newSize: number) => {
     trackGridSizeChange(gridSize, newSize);
     setGridSize(newSize);
@@ -133,31 +129,17 @@ export default function Home() {
                 Neues Spiel
               </button>
               
-              {gameState.gameStartTime !== null && (
-                <button
-                  onClick={handleResetGame}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold text-sm cursor-pointer"
-                >
-                  Reset
-                </button>
-              )}
-              
-              <div className="flex items-center gap-2">
-                <label htmlFor="grid-size" className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                  Grid:
-                </label>
-                <select
-                  id="grid-size"
-                  value={gridSize}
-                  onChange={(e) => handleGridSizeChange(Number(e.target.value))}
-                  className="px-2 py-1 bg-gray-700 border border-gray-600 text-white rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value={2}>2x2 (4 cards)</option>
-                  <option value={4}>4x4 (16 cards)</option>
-                  <option value={6}>6x6 (36 cards)</option>
-                  <option value={8}>8x8 (64 cards)</option>
-                </select>
-              </div>
+              <select
+                id="grid-size"
+                value={gridSize}
+                onChange={(e) => handleGridSizeChange(Number(e.target.value))}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold text-sm cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value={2}>2x2 (4 cards)</option>
+                <option value={4}>4x4 (16 cards)</option>
+                <option value={6}>6x6 (36 cards)</option>
+                <option value={8}>8x8 (64 cards)</option>
+              </select>
             </div>
             
             {/* Game Stats */}
