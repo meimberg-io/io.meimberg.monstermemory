@@ -25,7 +25,6 @@ services:
   app-dev:
     profiles: ["dev"]
     extends: app-base
-    container_name: monstermemory-app-dev
     volumes:
       - ./src:/app/src:ro
       - ./public:/app/public:ro
@@ -39,7 +38,6 @@ services:
   app-prod:
     profiles: ["prod"]
     extends: app-base
-    container_name: monstermemory-app-prod
 
   
 
