@@ -48,10 +48,16 @@ jobs:
           # Monstermemory-specific deployment
           APP_NAME="monstermemory"
           APP_PORT="${{ env.APP_PORT }}"
-          APP_DIR="/opt/$APP_NAME"
           
-          # Create application directory
-          mkdir -p $APP_DIR && cd $APP_DIR
+          # Try /opt/ first, fallback to home directory
+          if mkdir -p /opt/$APP_NAME 2>/dev/null; then
+            APP_DIR="/opt/$APP_NAME"
+          else
+            APP_DIR="$HOME/$APP_NAME"
+            mkdir -p $APP_DIR
+          fi
+          
+          cd $APP_DIR
           
           # Create production environment file
           cat > .env << 'EOF'
