@@ -43,7 +43,7 @@ jobs:
       with:
         host: ${{ vars.HOST || secrets.HOST }}
         username: ${{ vars.USERNAME || 'deploy' }}
-        key: ${{ secrets.SSH_KEY }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           # Monstermemory-specific deployment
           APP_NAME="monstermemory"
