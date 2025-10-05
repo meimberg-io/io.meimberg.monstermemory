@@ -120,16 +120,23 @@ export default function Home() {
             {/* Game Controls */}
             <div className="flex items-center gap-3">
               <button
-                onClick={handleNewGame}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm"
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold text-sm cursor-pointer"
+                onClick={() => window.open('https://luxarise.com/collections/monsterbilder', '_blank')}
               >
-                New Game
+                Bilder Online Kaufen
+              </button>
+              
+              <button
+                onClick={handleNewGame}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm cursor-pointer"
+              >
+                Neues Spiel
               </button>
               
               {gameState.gameStartTime !== null && (
                 <button
                   onClick={handleResetGame}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold text-sm"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold text-sm cursor-pointer"
                 >
                   Reset
                 </button>
@@ -157,11 +164,11 @@ export default function Home() {
             <div className="flex items-center gap-6 text-sm">
               <div className="text-center">
                 <div className="text-lg font-bold text-blue-500">{gameState.moves}</div>
-                <div className="text-xs text-gray-400">Moves</div>
+                <div className="text-xs text-gray-400">Züge</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-green-500">{gameState.matchedPairs}</div>
-                <div className="text-xs text-gray-400">Matched</div>
+                <div className="text-xs text-gray-400">Gefunden</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-purple-500">
@@ -171,13 +178,13 @@ export default function Home() {
                       ? Math.floor((gameState.gameEndTime! - gameState.gameStartTime!) / 1000)
                       : 0}s
                 </div>
-                <div className="text-xs text-gray-400">Time</div>
+                <div className="text-xs text-gray-400">Zeit</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-orange-500">
                   {gameState.moves > 0 ? Math.round((gameState.matchedPairs * 2 / gameState.moves) * 100) : 0}%
                 </div>
-                <div className="text-xs text-gray-400">Accuracy</div>
+                <div className="text-xs text-gray-400">Genauigkeit</div>
               </div>
             </div>
           </div>
