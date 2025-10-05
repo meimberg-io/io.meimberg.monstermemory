@@ -6,6 +6,7 @@ on:
 
 env:
   APP_PORT: ${{ vars.APP_PORT }}
+  APP_NAME: "monstermemory"
 
 jobs:
   test:
@@ -41,18 +42,18 @@ jobs:
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ vars.HOST || secrets.HOST }}
+        host: ${{ vars.HOST  }}
         username: ${{ vars.USERNAME || 'deploy' }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          # Monstermemory-specific deployment
-          APP_NAME="monstermemory"
-          APP_PORT="${{ env.APP_PORT }}"
-          
-          # Create application directory in /opt/
+
+          # setup variables
+          APP_NAME=${{ env.APP_NAME }}
+          APP_PORT="${{ env.APP_PORT }}"          
           APP_DIR="/opt/$APP_NAME"
-          mkdir -p $APP_DIR
-          
+
+          # Create application directory
+          mkdir -p $APP_DIR          
           cd $APP_DIR
           
           # Create production environment file
