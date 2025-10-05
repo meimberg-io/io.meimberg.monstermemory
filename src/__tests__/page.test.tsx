@@ -8,17 +8,7 @@ jest.mock('../components/GameBoard', () => {
   }
 })
 
-jest.mock('../components/GameControls', () => {
-  return function MockGameControls() {
-    return <div data-testid="game-controls">Game Controls</div>
-  }
-})
-
-jest.mock('../components/GameStats', () => {
-  return function MockGameStats() {
-    return <div data-testid="game-stats">Game Stats</div>
-  }
-})
+// GameControls and GameStats are integrated into the main page, not separate components
 
 describe('Home Page', () => {
   it('renders the main page with game components', () => {
@@ -29,8 +19,18 @@ describe('Home Page', () => {
     
     // Check if game components are rendered
     expect(screen.getByTestId('game-board')).toBeInTheDocument()
-    expect(screen.getByTestId('game-controls')).toBeInTheDocument()
-    expect(screen.getByTestId('game-stats')).toBeInTheDocument()
+    
+    // Check if game controls are present (buttons and select)
+    expect(screen.getByText('Neues Spiel')).toBeInTheDocument()
+    expect(screen.getByText('Bilder Online Kaufen')).toBeInTheDocument()
+    expect(screen.getByText('2x2 (4 cards)')).toBeInTheDocument()
+    expect(screen.getByText('4x4 (16 cards)')).toBeInTheDocument()
+    
+    // Check if game stats are present
+    expect(screen.getByText('Züge')).toBeInTheDocument()
+    expect(screen.getByText('Gefunden')).toBeInTheDocument()
+    expect(screen.getByText('Zeit')).toBeInTheDocument()
+    expect(screen.getByText('Genauigkeit')).toBeInTheDocument()
   })
 
   it('renders without crashing', () => {
