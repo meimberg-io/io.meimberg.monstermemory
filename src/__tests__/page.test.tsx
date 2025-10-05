@@ -25,7 +25,7 @@ describe('Home Page', () => {
     render(<Home />)
     
     // Check if the main heading is present
-    expect(screen.getByText('Memory Game')).toBeInTheDocument()
+    expect(screen.getByText('Monstermemory')).toBeInTheDocument()
     
     // Check if game components are rendered
     expect(screen.getByTestId('game-board')).toBeInTheDocument()
