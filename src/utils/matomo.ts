@@ -1,7 +1,7 @@
 // Matomo tracking utilities
 declare global {
   interface Window {
-    _paq: any[];
+    _paq: unknown[];
   }
 }
 

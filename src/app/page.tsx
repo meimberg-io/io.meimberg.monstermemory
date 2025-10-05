@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import GameBoard from '@/components/GameBoard';
-import GameStats from '@/components/GameStats';
-import GameControls from '@/components/GameControls';
 import GameCelebration from '@/components/GameCelebration';
 import { useMemoryGame } from '@/hooks/useMemoryGame';
 import { trackGameStart, trackGameComplete, trackGridSizeChange, trackPageView } from '@/utils/matomo';
@@ -103,10 +102,12 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             {/* Title */}
             <div className="flex items-center gap-3">
-              <img 
+              <Image 
                 src="/monstershape2_white.png" 
                 alt="Monster" 
-                className="w-8 h-8 filter brightness-0 invert"
+                width={32}
+                height={32}
+                className="filter brightness-0 invert"
               />
               <h1 className="text-2xl font-bold text-white whitespace-nowrap">
                 Monstermemory

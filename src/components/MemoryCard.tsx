@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Card } from '@/types/game';
 import { useState } from 'react';
 
@@ -52,10 +53,12 @@ export default function MemoryCard({ card, onClick, isDisabled, isWrongPair }: M
           `}
           style={{ borderRadius: '4px' }}
         >
-          <img 
+          <Image 
             src="/monstershape2_white.png" 
             alt="Monster" 
-            className="w-10 h-10 opacity-60 filter brightness-0 invert"
+            width={40}
+            height={40}
+            className="opacity-60 filter brightness-0 invert"
           />
         </div>
 
@@ -70,10 +73,11 @@ export default function MemoryCard({ card, onClick, isDisabled, isWrongPair }: M
           style={{ borderRadius: '4px' }}
         >
           {card.imageUrl ? (
-            <img
+            <Image
               src={card.imageUrl}
               alt={`Memory card ${card.id}`}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           ) : (
             <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600">
