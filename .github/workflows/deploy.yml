@@ -1,62 +1,98 @@
-name: Deploy Next.js to Server
+name: Deploy Monstermemory to Server
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - master
+    branches: [ main, master ]
+
+env:
+  APP_PORT: ${{ vars.APP_PORT }}
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-        - name: Set up Node.js
-          uses: actions/setup-node@v3
-          with:
-              node-version: 20
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
 
-        - name: Install Dependencies
-          run: |
-              rm -f package-lock.json
+    - name: Install dependencies
+      run: npm ci
 
-        - name: Install Dependencies
-          run: |
-              npm install
+    - name: Run tests
+      run: |
+        npm run lint
+        npm run build
+        npm run test:ci
 
-        - name: Build Monstermemory
-          run: |
-              npm run build
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-        - name: Deploy to Server
-          env:
-              SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-              SERVER_USER: ${{ vars.SERVER_USER }}
-              SERVER_HOSTNAME: ${{ vars.SERVER_HOSTNAME }}
-              SERVER_ROOTDIR: ${{ vars.SERVER_ROOTDIR }}
-          run: |
-
-              mkdir -p ~/.ssh
-              echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_key
-              chmod 600 ~/.ssh/ssh_key
-              ssh-keyscan -H "$SERVER_HOSTNAME" >> ~/.ssh/known_hosts
-
-              echo "Starting rsync"
-
-              rsync -avz --delete \
-                --exclude=/.ssh \
-                --exclude=/.git \
-                --exclude=/.github \
-                --exclude=/.cache \
-                --exclude=/.tmp \
-                --exclude=/logs \
-                --exclude=/database \
-                --exclude=/data \
-                --exclude=/src \
-                --exclude=public/uploads \
-                -e "ssh -i ~/.ssh/ssh_key" "${GITHUB_WORKSPACE}/" "$SERVER_USER"@"$SERVER_HOSTNAME":"$SERVER_ROOTDIR"
-
-              ssh -i ~/.ssh/ssh_key "$SERVER_USER"@"$SERVER_HOSTNAME" "cd \"$SERVER_ROOTDIR\" && pm2 restart monstermemory"
-              echo "Monstermemory deployed successfully!"
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ vars.HOST || secrets.HOST }}
+        username: ${{ vars.USERNAME || 'deploy' }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          # Monstermemory-specific deployment
+          APP_NAME="monstermemory"
+          APP_PORT="${{ env.APP_PORT }}"
+          APP_DIR="/opt/$APP_NAME"
+          
+          # Create application directory
+          mkdir -p $APP_DIR && cd $APP_DIR
+          
+          # Create production environment file
+          cat > .env << 'EOF'
+          NODE_ENV=production
+          APP_PORT=$APP_PORT
+          PORT=5679
+          # Database settings (if needed in future)
+          DB_HOST=mysql
+          DB_PORT=3306
+          DB_NAME=app_db
+          DB_USER=app_user
+          DB_PASSWORD=devpassword
+          DB_ROOT_PASSWORD=rootpassword
+          # Redis settings (if needed in future)
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          EOF
+          
+          # Clone the repository on the server
+          rm -rf temp-deploy
+          git clone --depth 1 https://github.com/${{ github.repository }}.git temp-deploy
+          cp -r temp-deploy/* ./
+          cp -r temp-deploy/.* ./ 2>/dev/null || true
+          rm -rf temp-deploy
+          
+          # Deploy using the unified docker-compose.yml with production profile
+          docker-compose down || true
+          docker-compose --profile prod up -d --build
+          
+          # Clean up
+          docker image prune -f
+          
+          # Verify deployment
+          echo "Waiting for application to start..."
+          sleep 30
+          if curl -f http://localhost:$APP_PORT/ > /dev/null 2>&1; then
+            echo "✅ Monstermemory deployed successfully on port $APP_PORT!"
+            echo "🌐 Application is available at: http://${{ vars.HOST || secrets.HOST }}:$APP_PORT"
+          else
+            echo "❌ Deployment verification failed!"
+            echo "📋 Container logs:"
+            docker-compose --profile prod logs || true
+            exit 1
+          fi
