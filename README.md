@@ -13,7 +13,7 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ### Docker Development
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 Open [http://localhost:8201](http://localhost:8201)
 
@@ -77,10 +77,10 @@ npm run test:ci      # Run tests with coverage
 ### Docker Profiles
 ```bash
 # Development (with volume mounts)
-docker-compose --profile dev up
+docker compose --profile dev up
 
 # Production (no volume mounts)
-docker-compose --profile prod up
+docker compose --profile prod up
 ```
 
 ## Environment Variables

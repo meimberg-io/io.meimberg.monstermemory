@@ -122,8 +122,8 @@ jobs:
           EOF
           
           # Pull latest image and deploy
-          docker-compose pull
-          docker-compose up -d
+          docker compose pull
+          docker compose up -d
           
           # Verify deployment
           if docker ps | grep -q monstermemory; then
