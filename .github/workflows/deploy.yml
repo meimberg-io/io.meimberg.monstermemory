@@ -114,8 +114,8 @@ jobs:
           EOF
           
           # Pull latest image and deploy
-          docker compose pull
-          docker compose up -d
+          docker-compose pull
+          docker-compose up -d
           
           # Verify deployment
           echo "✅ Monstermemory deployed successfully!"
