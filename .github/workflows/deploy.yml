@@ -101,7 +101,7 @@ jobs:
                 - HOSTNAME=0.0.0.0
               labels:
                 - "traefik.enable=true"
-                - "traefik.http.routers.monstermemory.rule=Host(\\\`${{ env.APP_DOMAIN }}\\\`)"
+                - "traefik.http.routers.monstermemory.rule=Host(\`${{ env.APP_DOMAIN }}\`)"
                 - "traefik.http.routers.monstermemory.entrypoints=websecure"
                 - "traefik.http.routers.monstermemory.tls.certresolver=le"
                 - "traefik.http.services.monstermemory.loadbalancer.server.port=5679"
