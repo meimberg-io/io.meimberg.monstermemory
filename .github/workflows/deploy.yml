@@ -73,6 +73,7 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     env:
       APP_DOMAIN: ${{ vars.APP_DOMAIN || 'monstermemory-2.meimberg.io' }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
     - name: Deploy to server
@@ -81,7 +82,13 @@ jobs:
         host: ${{ vars.SERVER_HOST }}
         username: ${{ vars.SERVER_USER || 'deploy' }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        envs: GITHUB_TOKEN
         script: |
+          set -e
+          
+          # Login to GitHub Container Registry
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          
           # Create project directory
           mkdir -p /srv/projects/monstermemory
           cd /srv/projects/monstermemory
@@ -118,6 +125,10 @@ jobs:
           docker-compose up -d
           
           # Verify deployment
-          echo "✅ Monstermemory deployed successfully!"
-          echo "🌐 Accessible at: https://${{ env.APP_DOMAIN }}"
-          docker ps | grep monstermemory || echo "⚠️ Container not running"
+          if docker ps | grep -q monstermemory; then
+            echo "✅ Monstermemory deployed successfully!"
+            echo "🌐 Accessible at: https://${{ env.APP_DOMAIN }}"
+          else
+            echo "❌ Deployment failed - container not running"
+            exit 1
+          fi

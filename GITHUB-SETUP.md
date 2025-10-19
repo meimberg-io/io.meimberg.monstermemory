@@ -131,8 +131,8 @@ dig monstermemory-2.meimberg.io +short
 ```
 
 **Image pull failed:**
-- Image must be public or
-- Add GHCR authentication on server
+- Automatically handled via `GITHUB_TOKEN`
+- If still failing, verify package permissions in GitHub
 
 
 
