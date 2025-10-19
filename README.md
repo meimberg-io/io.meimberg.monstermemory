@@ -19,19 +19,26 @@ Open [http://localhost:8201](http://localhost:8201)
 
 ## Deployment
 
-### Prerequisites
-1. **Server Setup** (one-time):
-   ```bash
-   # Run on your server once
-   curl -fsSL https://raw.githubusercontent.com/meimberg-io/io.meimberg.serversetup/main/scripts/server-setup.sh | bash
-   ```
+**Automatic deployment on push to `main` branch.**
 
-2. **GitHub Configuration**:
-   - **Variables**: `APP_PORT`, `HOST`, `USERNAME`
-   - **Secrets**: `SSH_PRIVATE_KEY`
+### Initial Setup
+
+**First time?** See [GITHUB-SETUP.md](GITHUB-SETUP.md) for:
+- GitHub Variables & Secrets configuration
+- DNS setup
+- Server infrastructure prerequisites
 
 ### Deploy
-Push to `master` branch → automatic deployment via GitHub Actions
+
+```bash
+git push origin main
+```
+
+Watch progress: https://github.com/olivermeimberg/io.meimberg.monstermemory/actions
+
+**Deployment time:** ~3-4 minutes
+
+**See:** [DEPLOYMENT.md](DEPLOYMENT.md) for operations and troubleshooting
 
 ## Project Structure
 
