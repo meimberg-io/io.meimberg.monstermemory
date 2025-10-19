@@ -54,10 +54,10 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
-          type=sha,prefix={{branch}}-
           type=ref,event=branch
+          type=sha,prefix={{branch}}-
           type=semver,pattern={{version}}
-          latest
+          type=raw,value=latest,enable={{is_default_branch}}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
