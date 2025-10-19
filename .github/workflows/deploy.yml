@@ -73,6 +73,7 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     env:
       APP_DOMAIN: ${{ vars.APP_DOMAIN || 'monstermemory-2.meimberg.io' }}
+      DOCKER_IMAGE: ghcr.io/${{ github.repository }}:latest
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
@@ -82,7 +83,7 @@ jobs:
         host: ${{ vars.SERVER_HOST }}
         username: ${{ vars.SERVER_USER || 'deploy' }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        envs: GITHUB_TOKEN
+        envs: GITHUB_TOKEN,DOCKER_IMAGE
         script: |
           set -e
           
@@ -99,7 +100,7 @@ jobs:
           
           services:
             monstermemory:
-              image: ghcr.io/olivermeimberg/io.meimberg.monstermemory:latest
+              image: $DOCKER_IMAGE
               container_name: monstermemory
               restart: unless-stopped
               environment:
