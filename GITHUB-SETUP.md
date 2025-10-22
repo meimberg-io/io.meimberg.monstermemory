@@ -80,7 +80,7 @@ git commit -m "Setup deployment"
 git push origin main
 ```
 
-**Monitor:** https://github.com/olivermeimberg/io.meimberg.monstermemory/actions
+**Monitor:** https://github.com/meimberg-io/io.meimberg.monstermemory/actions
 
 **Deployment takes ~3-4 minutes:**
 1. ✅ Tests run (lint, build, jest)

@@ -28,7 +28,7 @@ This covers:
 git push origin main
 ```
 
-Watch: https://github.com/olivermeimberg/io.meimberg.monstermemory/actions
+Watch: https://github.com/meimberg-io/io.meimberg.monstermemory/actions
 
 ## Operations
 

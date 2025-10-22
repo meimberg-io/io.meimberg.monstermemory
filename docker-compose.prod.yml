@@ -6,7 +6,7 @@ version: "3.9"
 
 services:
   monstermemory:
-    image: ghcr.io/olivermeimberg/io.meimberg.monstermemory:latest
+    image: ghcr.io/meimberg-io/io.meimberg.monstermemory:latest
     container_name: monstermemory
     restart: unless-stopped
     environment:

@@ -34,7 +34,7 @@ Open [http://localhost:8201](http://localhost:8201)
 git push origin main
 ```
 
-Watch progress: https://github.com/olivermeimberg/io.meimberg.monstermemory/actions
+Watch progress: https://github.com/meimberg-io/io.meimberg.monstermemory/actions
 
 **Deployment time:** ~3-4 minutes
 
