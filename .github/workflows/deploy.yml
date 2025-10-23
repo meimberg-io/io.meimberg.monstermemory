@@ -72,18 +72,31 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     env:
+      PROJECT_NAME: monstermemory
       APP_DOMAIN: ${{ vars.APP_DOMAIN || 'monstermemory-2.meimberg.io' }}
       DOCKER_IMAGE: ghcr.io/${{ github.repository }}:latest
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Copy docker-compose template to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ vars.SERVER_HOST }}
+        username: ${{ vars.SERVER_USER || 'deploy' }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "docker-compose.prod.yml"
+        target: "/srv/projects/${{ env.PROJECT_NAME }}/"
+    
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ vars.SERVER_HOST }}
         username: ${{ vars.SERVER_USER || 'deploy' }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        envs: GITHUB_TOKEN,DOCKER_IMAGE
+        envs: PROJECT_NAME,GITHUB_TOKEN,DOCKER_IMAGE,APP_DOMAIN
         script: |
           set -e
           
@@ -91,45 +104,32 @@ jobs:
           echo "$GITHUB_TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           
           # Create project directory
-          mkdir -p /srv/projects/monstermemory
-          cd /srv/projects/monstermemory
+          mkdir -p /srv/projects/${PROJECT_NAME}
+          cd /srv/projects/${PROJECT_NAME}
           
-          # Create docker-compose.yml with Traefik labels
-          cat > docker-compose.yml << EOF
-          version: "3.9"
+          # Substitute variables in docker-compose template
+          export PROJECT_NAME="${PROJECT_NAME}"
+          export DOCKER_IMAGE="${DOCKER_IMAGE}"
+          export APP_DOMAIN="${APP_DOMAIN}"
           
-          services:
-            monstermemory:
-              image: $DOCKER_IMAGE
-              container_name: monstermemory
-              restart: unless-stopped
-              environment:
-                - NODE_ENV=production
-                - PORT=5679
-                - HOSTNAME=0.0.0.0
-              labels:
-                - "traefik.enable=true"
-                - "traefik.http.routers.monstermemory.rule=Host(\`${{ env.APP_DOMAIN }}\`)"
-                - "traefik.http.routers.monstermemory.entrypoints=websecure"
-                - "traefik.http.routers.monstermemory.tls.certresolver=le"
-                - "traefik.http.services.monstermemory.loadbalancer.server.port=5679"
-              networks:
-                - traefik
+          envsubst < docker-compose.prod.yml > docker-compose.yml
           
-          networks:
-            traefik:
-              external: true
-          EOF
+          echo "Generated docker-compose.yml:"
+          cat docker-compose.yml
           
           # Pull latest image and deploy
           docker compose pull
           docker compose up -d
           
+          # Wait for containers to be ready
+          sleep 5
+          
           # Verify deployment
-          if docker ps | grep -q monstermemory; then
-            echo "✅ Monstermemory deployed successfully!"
+          if docker ps | grep -q ${PROJECT_NAME}; then
+            echo "✅ ${PROJECT_NAME} deployed successfully!"
             echo "🌐 Accessible at: https://${{ env.APP_DOMAIN }}"
           else
             echo "❌ Deployment failed - container not running"
+            docker logs ${PROJECT_NAME}
             exit 1
           fi

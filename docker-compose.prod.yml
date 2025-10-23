@@ -1,25 +1,25 @@
 # Production docker-compose.yml
-# This file is automatically created by GitHub Actions on the server
-# It's included here as reference/documentation
+# Used by GitHub Actions deployment workflow
+# Variables are substituted using envsubst during deployment
 
 version: "3.9"
 
 services:
-  monstermemory:
-    image: ghcr.io/meimberg-io/io.meimberg.monstermemory:latest
-    container_name: monstermemory
+  ${PROJECT_NAME}:
+    image: ${DOCKER_IMAGE}
+    container_name: ${PROJECT_NAME}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - PORT=5679
       - HOSTNAME=0.0.0.0
     labels:
-      # Traefik automatic routing
       - "traefik.enable=true"
-      - "traefik.http.routers.monstermemory.rule=Host(`monstermemory-2.meimberg.io`)"
-      - "traefik.http.routers.monstermemory.entrypoints=websecure"
-      - "traefik.http.routers.monstermemory.tls.certresolver=le"
-      - "traefik.http.services.monstermemory.loadbalancer.server.port=5679"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${PROJECT_NAME}.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.${PROJECT_NAME}.entrypoints=websecure"
+      - "traefik.http.routers.${PROJECT_NAME}.tls.certresolver=le"
+      - "traefik.http.services.${PROJECT_NAME}.loadbalancer.server.port=5679"
     networks:
       - traefik
 
